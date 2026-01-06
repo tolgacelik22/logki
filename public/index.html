@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>klog-ai — Kubernetes Log Quality Analyzer</title>
+    <meta name="description" content="klog-ai analyzes Kubernetes logs to detect semantic mismatches, log design bugs, and alert noise — before they become incidents.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="brand-name">klog-ai</span>
+                <span class="brand-badge">ATLAS</span>
+            </div>
+            <div class="nav-links">
+                <a href="#how-it-works">How it works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#early-access">Get access</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-headline">Your logs are lying.</h1>
+            <p class="hero-subheadline">
+                klog-ai analyzes Kubernetes logs to detect semantic mismatches, log design bugs, and alert noise — before they become incidents.
+            </p>
+            <div class="hero-cta">
+                <a href="#early-access" class="btn btn-primary">Request early access</a>
+                <a href="#sample-report" class="btn btn-secondary">View sample report</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Manifesto Section -->
+    <section class="manifesto">
+        <div class="container">
+            <div class="manifesto-content">
+                <p>
+                    <strong>WARN and ERROR have lost their meaning.</strong> When every retry, every timeout, every edge case gets logged at WARN, you've trained your team to ignore warnings. The log level becomes decorative. The alert becomes noise.
+                </p>
+                <p>
+                    Domain state is not an operational issue. A payment declined, a user not found, a rate limit hit — these are expected behaviors. They belong in metrics, not in your on-call engineer's 3am pager. When you conflate business logic with infrastructure health, you create false incidents.
+                </p>
+                <p>
+                    False incidents are worse than missed ones. A missed incident teaches you something. A false incident teaches your team to stop caring. After the fifteenth wake-up for a non-issue, nobody trusts the system anymore. Alert fatigue is not a people problem. It's a log design problem.
+                </p>
+                <p>
+                    <strong>klog-ai does not page you.</strong> It analyzes your log output for semantic consistency, identifies patterns that will become noise, and surfaces the structural issues in your logging before they erode trust. It's a quality tool, not an alerting system.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- What klog-ai detects -->
+    <section class="detects">
+        <div class="container">
+            <h2 class="section-title">What klog-ai detects</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3 class="card-title">Semantic log level mismatches</h3>
+                    <p class="card-description">
+                        An HTTP 404 logged at ERROR. A successful retry logged at WARN. klog-ai identifies when log levels don't match operational reality — the subtle drift that makes your alerts meaningless over time.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Domain codes logged as warnings</h3>
+                    <p class="card-description">
+                        Business logic outcomes — insufficient funds, invalid input, rate limits — should be metrics, not log warnings. klog-ai flags domain-specific error codes that are polluting your operational signal.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Noise hiding real incidents</h3>
+                    <p class="card-description">
+                        When 90% of your WARN logs are ignorable, you'll miss the 10% that matter. klog-ai scores log streams for noise density and identifies the patterns burying your actual incidents.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Early Access Form -->
+    <section id="early-access" class="early-access">
+        <div class="container">
+            <div class="early-access-content">
+                <div class="early-access-text">
+                    <h2 class="section-title">Request early access</h2>
+                    <p class="early-access-description">
+                        Enter your email to receive a klog-ai access token.<br>
+                        First 5 runs are free.
+                    </p>
+                </div>
+                <div class="early-access-form-container">
+                    <form id="access-form" class="access-form">
+                        <div class="form-group">
+                            <input 
+                                type="email" 
+                                id="email-input" 
+                                name="email" 
+                                placeholder="you@company.com" 
+                                required
+                                autocomplete="email"
+                            >
+                            <button type="submit" class="btn btn-primary">Request access</button>
+                        </div>
+                        <p class="form-hint">No password. No dashboard. Just a token.</p>
+                    </form>
+                    <div id="form-success" class="form-success hidden">
+                        <p class="success-title">Check your email</p>
+                        <p class="success-text">
+                            Verify your address to receive your access token.<br>
+                            Your token will include 5 free runs.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Example Output Section -->
+    <section id="sample-report" class="example-output">
+        <div class="container">
+            <h2 class="section-title">Sample report excerpt</h2>
+            <div class="report">
+                <pre class="report-content"><code># klog-ai analysis report
+# analyzed: 847,293 log entries across 142 pods
+# timeframe: last 24 hours
+
+## Summary
+
+| Metric              | Value    |
+|---------------------|----------|
+| Noise Score         | 73/100   |
+| Semantic Mismatches | 12       |
+| Suggested Fixes     | 8        |
+| High Priority       | 2        |
+
+---
+
+## Finding #1 — HIGH PRIORITY
+
+**payment-service/checkout.go:234**
+
+Classification: DOMAIN_CODE_AS_WARN
+Frequency: 4,892 occurrences / 24h
+
+```
+WARN: payment declined for user_id=xxx, reason=INSUFFICIENT_FUNDS
+```
+
+Analysis: This is expected business logic, not an operational issue.
+INSUFFICIENT_FUNDS is a valid domain outcome, not a system warning.
+Logging this at WARN creates noise and trains on-call to ignore warnings.
+
+Suggested fix:
+- Log at INFO or DEBUG level
+- Emit metric: `payment_declined_total{reason="insufficient_funds"}`
+- Remove from alerting thresholds
+
+---
+
+## Finding #2 — MEDIUM PRIORITY
+
+**api-gateway/retry.go:89**
+
+Classification: SEMANTIC_MISMATCH
+Frequency: 2,341 occurrences / 24h
+
+```
+WARN: upstream request failed, retrying (attempt 2/3)
+```
+
+Analysis: This is a successful retry path — the system is working as designed.
+Logging intermediate retry attempts at WARN conflates transient behavior
+with actual failures. Only the final failure (if any) warrants WARN.
+
+Suggested fix:
+- Log retry attempts at DEBUG
+- Log final success at INFO
+- Log final failure at WARN with full context
+</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How it works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Request access</h3>
+                        <p class="step-description">
+                            Enter your email. Verify it. Receive an access token with 5 free runs. No password, no account creation.
+                        </p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Run klog-ai locally</h3>
+                        <p class="step-description">
+                            Install the CLI. Point it at your cluster using kubectl. Your logs never leave your machine — only the analysis runs locally.
+                        </p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Get a markdown report</h3>
+                        <p class="step-description">
+                            Receive a report with noise scores, semantic findings, and fix suggestions. Share it in a PR, attach it to a ticket, or just read it yourself.
+                        </p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Buy more runs when needed</h3>
+                        <p class="step-description">
+                            When your credits run out, return here and purchase more using the same email. Credits are added to your existing token.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How tokens work -->
+    <section class="tokens">
+        <div class="container">
+            <h2 class="section-title">How access tokens work</h2>
+            <div class="tokens-grid">
+                <div class="tokens-explanation">
+                    <p>
+                        After email verification, you receive an access token. This token is a short string that represents your credit balance. Store it locally (e.g., in <code>~/.klogai/token</code>) and pass it to the CLI when running analysis.
+                    </p>
+                    <p>
+                        Each run decreases your credit count by one. When you purchase more credits, they are added to the same token — no new token required.
+                    </p>
+                </div>
+                <div class="tokens-facts">
+                    <h4 class="tokens-subhead">Tokens are NOT</h4>
+                    <ul class="fact-list">
+                        <li>Kubernetes credentials</li>
+                        <li>Service account tokens</li>
+                        <li>Cluster access grants</li>
+                    </ul>
+                    <h4 class="tokens-subhead">Tokens ARE</h4>
+                    <ul class="fact-list fact-list-positive">
+                        <li>Safe to store locally</li>
+                        <li>Rotatable if compromised</li>
+                        <li>Reusable across purchases</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Privacy Section -->
+    <section class="privacy">
+        <div class="container">
+            <h2 class="section-title">What klog-ai never sees</h2>
+            <div class="privacy-grid">
+                <div class="privacy-column privacy-never">
+                    <h4 class="privacy-label">klog-ai NEVER receives</h4>
+                    <ul class="privacy-list">
+                        <li>Raw log contents</li>
+                        <li>Pod names or labels</li>
+                        <li>Service or deployment names</li>
+                        <li>Namespace names</li>
+                        <li>Cluster endpoints</li>
+                        <li>Secrets or credentials</li>
+                    </ul>
+                </div>
+                <div class="privacy-column privacy-may">
+                    <h4 class="privacy-label">klog-ai MAY record</h4>
+                    <ul class="privacy-list">
+                        <li>Token ID (anonymous)</li>
+                        <li>Run count per token</li>
+                        <li>Purchase history</li>
+                        <li>Email address</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="privacy-note">
+                All log analysis happens on your machine. The CLI connects to your cluster directly — we never see your infrastructure.
+            </p>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2 class="section-title">Pricing</h2>
+            <p class="pricing-intro">Pay per run. No subscriptions.</p>
+            <div class="pricing-grid">
+                <div class="pricing-tier pricing-tier-free">
+                    <div class="tier-header">
+                        <span class="tier-name">Starter</span>
+                        <span class="tier-price">Free</span>
+                    </div>
+                    <div class="tier-runs">5 runs</div>
+                    <div class="tier-note">Included with every new token</div>
+                </div>
+                <div class="pricing-tier">
+                    <div class="tier-header">
+                        <span class="tier-name">Small</span>
+                        <span class="tier-price">$9</span>
+                    </div>
+                    <div class="tier-runs">20 runs</div>
+                    <div class="tier-per-run">$0.45 / run</div>
+                </div>
+                <div class="pricing-tier">
+                    <div class="tier-header">
+                        <span class="tier-name">Medium</span>
+                        <span class="tier-price">$29</span>
+                    </div>
+                    <div class="tier-runs">100 runs</div>
+                    <div class="tier-per-run">$0.29 / run</div>
+                </div>
+                <div class="pricing-tier">
+                    <div class="tier-header">
+                        <span class="tier-name">Large</span>
+                        <span class="tier-price">$79</span>
+                    </div>
+                    <div class="tier-runs">500 runs</div>
+                    <div class="tier-per-run">$0.16 / run</div>
+                </div>
+            </div>
+            <p class="pricing-disclaimer">Early access pricing. Subject to change. Credits never expire.</p>
+        </div>
+    </section>
+
+    <!-- Who this is for -->
+    <section class="audience">
+        <div class="container">
+            <h2 class="section-title">Who this is for</h2>
+            <div class="audience-grid">
+                <div class="audience-column audience-for">
+                    <h3 class="audience-label">For</h3>
+                    <ul class="audience-list">
+                        <li>Teams running production Kubernetes workloads</li>
+                        <li>Engineers responsible for on-call quality and rotation health</li>
+                        <li>Teams experiencing alert fatigue and pager distrust</li>
+                        <li>Platform teams setting logging standards across services</li>
+                    </ul>
+                </div>
+                <div class="audience-column audience-not">
+                    <h3 class="audience-label">Not for</h3>
+                    <ul class="audience-list">
+                        <li>Anyone expecting dashboards or visualizations</li>
+                        <li>Teams looking for real-time alerting</li>
+                        <li>Anyone wanting a managed SaaS with accounts</li>
+                        <li>Teams preferring monthly subscriptions</li>
+                        <li>Beginners learning Kubernetes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <h2 class="cta-headline">Run klog-ai on your cluster</h2>
+            <p class="cta-subtext">
+                Get clarity before adding another dashboard.
+            </p>
+            <a href="#early-access" class="btn btn-primary btn-large">Request early access</a>
+            <p class="cta-disclaimer">
+                First 5 runs free. No password. No dashboard.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="brand-name">klog-ai</span>
+                    <span class="footer-tagline">Part of ATLAS Decision Intelligence</span>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/atlas-tools/klog-ai">GitHub</a>
+                    <a href="#pricing">Pricing</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Built for engineers who are tired of being woken up for nothing.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

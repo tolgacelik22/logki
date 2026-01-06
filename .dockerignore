@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Development files
+*.md
+.git/
+.gitignore
+.env
+.env.*
+
+# Old Docker files
+docker-compose.yml
+nginx.conf
+
+# Data
+*.db
+*.db-wal
+*.db-shm
+data/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
