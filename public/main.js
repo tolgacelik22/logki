@@ -1,7 +1,7 @@
 /**
  * klog-ai Landing Page
  * 
- * Email capture form with API integration.
+ * Email verification request form.
  * Falls back to mailto: if API fails.
  */
 
@@ -9,7 +9,7 @@
     'use strict';
 
     const FALLBACK_EMAIL = 'access@atlas-di.app';
-    const STORAGE_KEY = 'klog_lead_email';
+    const STORAGE_KEY = 'klog_verification_requested';
 
     const form = document.getElementById('access-form');
     const emailInput = document.getElementById('email-input');
@@ -20,10 +20,18 @@
         return;
     }
 
-    // Check if already submitted
-    const storedEmail = localStorage.getItem(STORAGE_KEY);
-    if (storedEmail) {
-        showSuccess();
+    // Check if already submitted (show success if recently requested)
+    const storedData = localStorage.getItem(STORAGE_KEY);
+    if (storedData) {
+        try {
+            const { ts } = JSON.parse(storedData);
+            // Show success if requested within last hour
+            if (Date.now() - ts < 60 * 60 * 1000) {
+                showSuccess();
+            }
+        } catch (e) {
+            localStorage.removeItem(STORAGE_KEY);
+        }
     }
 
     form.addEventListener('submit', async function(e) {
@@ -42,24 +50,22 @@
         setLoading(true);
 
         try {
-            const response = await fetch('/api/lead', {
+            const response = await fetch('/api/request-verification', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    email: email,
-                    source: 'landing',
-                    ts: Date.now(),
-                    ua: navigator.userAgent,
-                }),
+                body: JSON.stringify({ email }),
             });
 
             const data = await response.json();
 
             if (response.ok && data.ok) {
-                // Success - store email and show success state
-                localStorage.setItem(STORAGE_KEY, email);
+                // Success - store timestamp and show success state
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ 
+                    email, 
+                    ts: Date.now() 
+                }));
                 showSuccess();
             } else if (response.status === 429) {
                 // Rate limited
@@ -89,7 +95,7 @@
     function setLoading(loading) {
         if (submitBtn) {
             submitBtn.disabled = loading;
-            submitBtn.textContent = loading ? 'Submitting...' : 'Request access';
+            submitBtn.textContent = loading ? 'Sending...' : 'Request access';
         }
         emailInput.disabled = loading;
     }
