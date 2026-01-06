@@ -16,12 +16,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-net"
-
-      - "traefik.http.routers.klog.rule=Host(`klog.atlas-di.app`)"
       - "traefik.http.routers.klog.entrypoints=websecure"
+      - "traefik.http.routers.klog.rule=Host(`klog.atlas-di.app`)"
       - "traefik.http.routers.klog.tls=true"
       - "traefik.http.routers.klog.tls.certresolver=letsencrypt"
-
       - "traefik.http.services.klog.loadbalancer.server.port=8080"
 
 volumes:
@@ -30,3 +28,4 @@ volumes:
 networks:
   traefik-net:
     external: true
+
