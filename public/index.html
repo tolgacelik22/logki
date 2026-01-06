@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>klog-ai — Kubernetes Log Quality Analyzer</title>
-    <meta name="description" content="klog-ai analyzes Kubernetes logs to detect semantic mismatches, log design bugs, and alert noise — before they become incidents.">
+    <title>nois — Find the noise in your logs</title>
+    <meta name="description" content="nois analyzes Kubernetes logs to surface the noise hiding your real incidents. CLI-first. Local-only. No dashboards.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
@@ -15,8 +15,7 @@
     <nav class="nav">
         <div class="nav-container">
             <div class="nav-brand">
-                <span class="brand-name">klog-ai</span>
-                <span class="brand-badge">ATLAS</span>
+                <span class="brand-name">nois</span>
             </div>
             <div class="nav-links">
                 <a href="#how-it-works">How it works</a>
@@ -29,9 +28,9 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1 class="hero-headline">Your logs are lying.</h1>
+            <h1 class="hero-headline">Find the noise.</h1>
             <p class="hero-subheadline">
-                klog-ai analyzes Kubernetes logs to detect semantic mismatches, log design bugs, and alert noise — before they become incidents.
+                nois surfaces the log noise hiding your real incidents. Run it locally. Get a report. Fix your logging.
             </p>
             <div class="hero-cta">
                 <a href="#early-access" class="btn btn-primary">Request early access</a>
@@ -54,33 +53,33 @@
                     False incidents are worse than missed ones. A missed incident teaches you something. A false incident teaches your team to stop caring. After the fifteenth wake-up for a non-issue, nobody trusts the system anymore. Alert fatigue is not a people problem. It's a log design problem.
                 </p>
                 <p>
-                    <strong>klog-ai does not page you.</strong> It analyzes your log output for semantic consistency, identifies patterns that will become noise, and surfaces the structural issues in your logging before they erode trust. It's a quality tool, not an alerting system.
+                    <strong>nois does not page you.</strong> It analyzes your log output for semantic consistency, identifies patterns that will become noise, and surfaces the structural issues in your logging before they erode trust. It's a quality tool, not an alerting system.
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- What klog-ai detects -->
+    <!-- What nois detects -->
     <section class="detects">
         <div class="container">
-            <h2 class="section-title">What klog-ai detects</h2>
+            <h2 class="section-title">What nois detects</h2>
             <div class="cards">
                 <div class="card">
                     <h3 class="card-title">Semantic log level mismatches</h3>
                     <p class="card-description">
-                        An HTTP 404 logged at ERROR. A successful retry logged at WARN. klog-ai identifies when log levels don't match operational reality — the subtle drift that makes your alerts meaningless over time.
+                        An HTTP 404 logged at ERROR. A successful retry logged at WARN. nois identifies when log levels don't match operational reality — the subtle drift that makes your alerts meaningless over time.
                     </p>
                 </div>
                 <div class="card">
                     <h3 class="card-title">Domain codes logged as warnings</h3>
                     <p class="card-description">
-                        Business logic outcomes — insufficient funds, invalid input, rate limits — should be metrics, not log warnings. klog-ai flags domain-specific error codes that are polluting your operational signal.
+                        Business logic outcomes — insufficient funds, invalid input, rate limits — should be metrics, not log warnings. nois flags domain-specific error codes that are polluting your operational signal.
                     </p>
                 </div>
                 <div class="card">
                     <h3 class="card-title">Noise hiding real incidents</h3>
                     <p class="card-description">
-                        When 90% of your WARN logs are ignorable, you'll miss the 10% that matter. klog-ai scores log streams for noise density and identifies the patterns burying your actual incidents.
+                        When 90% of your WARN logs are ignorable, you'll miss the 10% that matter. nois scores log streams for noise density and identifies the patterns burying your actual incidents.
                     </p>
                 </div>
             </div>
@@ -94,7 +93,7 @@
                 <div class="early-access-text">
                     <h2 class="section-title">Request early access</h2>
                     <p class="early-access-description">
-                        Enter your email to receive a klog-ai access token.<br>
+                        Enter your email to receive a nois access token.<br>
                         First 5 runs are free.
                     </p>
                 </div>
@@ -130,7 +129,7 @@
         <div class="container">
             <h2 class="section-title">Sample report excerpt</h2>
             <div class="report">
-                <pre class="report-content"><code># klog-ai analysis report
+                <pre class="report-content"><code># nois report
 # analyzed: 847,293 log entries across 142 pods
 # timeframe: last 24 hours
 
@@ -208,7 +207,7 @@ Suggested fix:
                 <div class="step">
                     <div class="step-number">2</div>
                     <div class="step-content">
-                        <h3 class="step-title">Run klog-ai locally</h3>
+                        <h3 class="step-title">Run nois locally</h3>
                         <p class="step-description">
                             Install the CLI. Point it at your cluster using kubectl. Your logs never leave your machine — only the analysis runs locally.
                         </p>
@@ -243,7 +242,7 @@ Suggested fix:
             <div class="tokens-grid">
                 <div class="tokens-explanation">
                     <p>
-                        After email verification, you receive an access token. This token is a short string that represents your credit balance. Store it locally (e.g., in <code>~/.klogai/token</code>) and pass it to the CLI when running analysis.
+                        After email verification, you receive an access token. This token is a short string that represents your credit balance. Store it locally (e.g., in <code>~/.nois/token</code>) and pass it to the CLI when running analysis.
                     </p>
                     <p>
                         Each run decreases your credit count by one. When you purchase more credits, they are added to the same token — no new token required.
@@ -270,10 +269,10 @@ Suggested fix:
     <!-- Privacy Section -->
     <section class="privacy">
         <div class="container">
-            <h2 class="section-title">What klog-ai never sees</h2>
+            <h2 class="section-title">What nois never sees</h2>
             <div class="privacy-grid">
                 <div class="privacy-column privacy-never">
-                    <h4 class="privacy-label">klog-ai NEVER receives</h4>
+                    <h4 class="privacy-label">nois NEVER receives</h4>
                     <ul class="privacy-list">
                         <li>Raw log contents</li>
                         <li>Pod names or labels</li>
@@ -284,7 +283,7 @@ Suggested fix:
                     </ul>
                 </div>
                 <div class="privacy-column privacy-may">
-                    <h4 class="privacy-label">klog-ai MAY record</h4>
+                    <h4 class="privacy-label">nois MAY record</h4>
                     <ul class="privacy-list">
                         <li>Token ID (anonymous)</li>
                         <li>Run count per token</li>
@@ -373,7 +372,7 @@ Suggested fix:
     <!-- Final CTA -->
     <section class="final-cta">
         <div class="container">
-            <h2 class="cta-headline">Run klog-ai on your cluster</h2>
+            <h2 class="cta-headline">Find the noise in your logs</h2>
             <p class="cta-subtext">
                 Get clarity before adding another dashboard.
             </p>
@@ -389,11 +388,10 @@ Suggested fix:
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <span class="brand-name">klog-ai</span>
-                    <span class="footer-tagline">Part of ATLAS Decision Intelligence</span>
+                    <span class="brand-name">nois</span>
                 </div>
                 <div class="footer-links">
-                    <a href="https://github.com/atlas-tools/klog-ai">GitHub</a>
+                    <a href="https://github.com/atlas-tools/nois">GitHub</a>
                     <a href="#pricing">Pricing</a>
                 </div>
             </div>

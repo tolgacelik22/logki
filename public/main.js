@@ -1,5 +1,5 @@
 /**
- * klog-ai Landing Page
+ * nois Landing Page
  * 
  * Email verification request form.
  * Falls back to mailto: if API fails.
@@ -9,7 +9,7 @@
     'use strict';
 
     const FALLBACK_EMAIL = 'access@atlas-di.app';
-    const STORAGE_KEY = 'klog_verification_requested';
+    const STORAGE_KEY = 'nois_verification_requested';
 
     const form = document.getElementById('access-form');
     const emailInput = document.getElementById('email-input');
@@ -81,7 +81,7 @@
             }
         } catch (err) {
             // Network error - fallback to mailto
-            console.error('[klog] API error:', err.message);
+            console.error('[nois] API error:', err.message);
             fallbackToMailto(email);
         }
     });
@@ -138,7 +138,7 @@
             <p style="color: var(--text-secondary); font-size: 0.9375rem; margin-bottom: 1rem;">
                 Please email us directly:
             </p>
-            <a href="mailto:${FALLBACK_EMAIL}?subject=klog-ai%20Early%20Access&body=Email:%20${encodeURIComponent(email)}" 
+            <a href="mailto:${FALLBACK_EMAIL}?subject=nois%20Early%20Access&body=Email:%20${encodeURIComponent(email)}" 
                class="btn btn-primary"
                style="display: inline-block; text-decoration: none;">
                 Email ${FALLBACK_EMAIL}

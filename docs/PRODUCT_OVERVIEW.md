@@ -1,23 +1,19 @@
 # Product Overview
 
-This document defines what klog-ai is, who it serves, and why it exists.
+This document defines what nois is, who it serves, and why it exists.
 
----
+## What nois Is
 
-## What klog-ai Is
-
-klog-ai is a command-line tool that analyzes Kubernetes log output for semantic consistency, noise patterns, and log design issues.
+nois is a command-line tool that surfaces the noise hiding your real incidents.
 
 It runs locally on an engineer's machine. It pulls logs via kubectl. It generates a markdown report. It does not run continuously, does not install agents, and does not require a SaaS account.
 
 **Core function:** Tell you which of your WARN and ERROR logs are actually meaningful, and which are noise you should fix or downgrade.
 
----
+## What nois Is Not
 
-## What klog-ai Is Not
-
-| klog-ai is NOT | Why |
-|----------------|-----|
+| nois is NOT | Why |
+|-------------|-----|
 | An APM | Does not trace requests or measure latency |
 | An alerting system | Does not page anyone or integrate with PagerDuty |
 | A log viewer | Does not provide dashboards or search |
@@ -25,8 +21,6 @@ It runs locally on an engineer's machine. It pulls logs via kubectl. It generate
 | An AI chatbot | Does not answer arbitrary questions |
 | A SaaS dashboard | Has no login, no web UI for users |
 | An agent | Does not run in your cluster |
-
----
 
 ## The Problem
 
@@ -49,7 +43,7 @@ The result: when a real incident happens, the warning is buried in thousands of 
 - Excellent at storing and searching logs
 - Do not distinguish meaningful warnings from noise
 - No opinion on log quality
-- Cost scales with log volume, incentivizing less logging rather than better logging
+- Cost scales with log volume
 
 **APM tools (New Relic, Dynatrace):**
 - Focus on traces and metrics, not log semantics
@@ -61,14 +55,7 @@ The result: when a real incident happens, the warning is buried in thousands of 
 - Do not understand the difference between business logic and operational errors
 - Require continuous log ingestion (cost, privacy concerns)
 
-**Manual review:**
-- Does not scale
-- Depends on tribal knowledge
-- Often happens only after an incident
-
-klog-ai fills a gap: structured, opinionated analysis of log semantics without requiring log ingestion or continuous monitoring.
-
----
+nois fills a gap: structured, opinionated analysis of log semantics without requiring log ingestion or continuous monitoring.
 
 ## Target Audience
 
@@ -80,14 +67,6 @@ klog-ai fills a gap: structured, opinionated analysis of log semantics without r
 
 **On-call engineers** who are tired of being woken up for non-issues. They want to reduce alert fatigue by fixing the source, not by adding more ignore rules.
 
-**Tech leads** responsible for service reliability. They need to make the case for logging improvements with concrete evidence.
-
-### Secondary
-
-**DevOps engineers** setting up new clusters or services who want to establish good logging patterns from the start.
-
-**Consultants or contractors** auditing Kubernetes deployments and needing to quickly assess log quality.
-
 ### Explicitly Not For
 
 | Who | Why |
@@ -97,9 +76,6 @@ klog-ai fills a gap: structured, opinionated analysis of log semantics without r
 | Teams wanting dashboards | No web UI, no visualizations |
 | Teams wanting real-time alerts | This is a batch analysis tool |
 | Teams preferring SaaS subscriptions | No subscription model |
-| Anyone expecting AI magic | Heuristics first, LLM second |
-
----
 
 ## Core Product Principles
 
@@ -125,31 +101,29 @@ Users pay for what they use. No monthly fees. No annual contracts. One analysis 
 
 There is no user account. There is no login page. There is no usage dashboard. Identity is email. Authorization is token.
 
-**Rationale:** Dashboards require authentication systems, session management, password resets, RBAC, audit logs. All of this is complexity that does not serve the core function: analyzing logs and producing reports. Removing the dashboard removes 80% of typical SaaS infrastructure.
-
----
+**Rationale:** Dashboards require authentication systems, session management, password resets, RBAC, audit logs. All of this is complexity that does not serve the core function: analyzing logs and producing reports.
 
 ## User Journey
 
 ### 1. Discovery
 
-User finds klog-ai through:
+User finds nois through:
 - Engineering blog post or talk
 - Recommendation from colleague
-- Search for "kubernetes log quality" or "alert fatigue"
+- Search for "kubernetes log noise" or "alert fatigue"
 - GitHub discovery
 
 ### 2. Landing Page
 
-User reads landing page at klog.atlas-di.app. Key messages:
-- "Your logs are lying"
+User reads landing page at nois.atlas-di.app. Key messages:
+- "Find the noise"
 - Pay-per-run, no subscription
 - Privacy-first, logs stay local
 - First 5 runs free
 
-### 3. Email Submission
+### 3. Email Verification
 
-User enters email to request early access. No password. No account creation.
+User enters email to request early access. Receives verification link. Clicks to verify.
 
 ### 4. Token Receipt
 
@@ -158,19 +132,13 @@ User receives token via email. Token includes 5 free credits.
 ### 5. CLI Installation
 
 ```bash
-curl -fsSL https://klog.atlas-di.app/install.sh | sh
-```
-
-Or via pipx:
-
-```bash
-pipx install git+https://github.com/atlas-tools/klog-ai.git
+curl -fsSL https://nois.atlas-di.app/install.sh | sh
 ```
 
 ### 6. First Run
 
 ```bash
-klog-ai quickstart
+nois quickstart
 ```
 
 Interactive flow:
@@ -197,7 +165,7 @@ User takes action:
 
 ### 9. Repeat
 
-User runs klog-ai periodically:
+User runs nois periodically:
 - After major deployments
 - When on-call noise increases
 - As part of quarterly reliability reviews
@@ -206,13 +174,11 @@ User runs klog-ai periodically:
 
 When credits run out, user returns to landing page, purchases more credits using the same email. Credits are added to existing token.
 
----
-
 ## Product Philosophy
 
 ### Opinionated by Default
 
-klog-ai has opinions about what constitutes good logging practice. It will flag a successful retry logged at WARN. It will flag a domain-specific error code logged as an operational warning. These opinions are based on real-world experience with production Kubernetes systems.
+nois has opinions about what constitutes good logging practice. It will flag a successful retry logged at WARN. It will flag a domain-specific error code logged as an operational warning.
 
 Users can override these opinions with ignore rules, but the default is to surface potential issues.
 
@@ -221,11 +187,6 @@ Users can override these opinions with ignore rules, but the default is to surfa
 The core analysis is rule-based and deterministic. Pattern matching, grouping, and classification use heuristics that produce consistent results.
 
 LLM analysis (via the `explain` command) is optional and additive. It provides natural language explanations but does not change the core findings.
-
-This means:
-- Reports are reproducible
-- No surprise variations between runs
-- LLM costs are opt-in
 
 ### Reports, Not Dashboards
 
@@ -239,39 +200,9 @@ Dashboards require users to visit a website. Reports go where users already work
 
 ### Ephemeral Execution
 
-klog-ai is not a daemon. It does not run in the background. It does not install cron jobs. It runs when invoked, produces output, and exits.
+nois is not a daemon. It does not run in the background. It does not install cron jobs. It runs when invoked, produces output, and exits.
 
 This means:
 - No resource consumption when not in use
 - No version drift between cluster and analyzer
 - No security surface when not actively analyzing
-
----
-
-## Long-Term Vision
-
-### Near-Term (Current)
-
-- Lead capture and early access distribution
-- Core CLI functionality (fetch, report, explain)
-- Pay-per-run credit system
-
-### Medium-Term
-
-- CI/CD integration (run on PR, fail if noise score increases)
-- Team sharing (reports uploaded to shared workspace, opt-in)
-- Historical comparison (diff reports over time)
-
-### Long-Term
-
-- Language-aware analysis (understand log formats by framework)
-- Fix generation (suggest code changes, not just log level changes)
-- Integration with logging libraries (emit warnings at development time)
-
-### What Will Not Change
-
-- CLI-first interface
-- Local-only log processing
-- Pay-per-run pricing
-- No user accounts or dashboards
-

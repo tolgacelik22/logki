@@ -1,13 +1,13 @@
 {
-  "name": "klog-landing",
+  "name": "nois-landing",
   "version": "1.0.0",
-  "description": "klog-ai landing page with lead capture",
+  "description": "nois landing page with lead capture",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
     "dev": "node server/index.js"
   },
-  "keywords": ["klog-ai", "landing", "lead-capture"],
+  "keywords": ["nois", "landing", "lead-capture"],
   "author": "ATLAS-DI",
   "license": "MIT",
   "dependencies": {
@@ -20,4 +20,3 @@
     "node": ">=18.0.0"
   }
 }
-

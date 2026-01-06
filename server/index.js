@@ -1,5 +1,5 @@
 /**
- * klog-ai Landing Server
+ * nois Landing Server
  */
 
 const express = require('express');
@@ -21,7 +21,7 @@ const SMTP_HOST = process.env.SMTP_HOST || null;
 const SMTP_PORT = process.env.SMTP_PORT || 587;
 const SMTP_USER = process.env.SMTP_USER || null;
 const SMTP_PASS = process.env.SMTP_PASS || null;
-const SMTP_FROM = process.env.SMTP_FROM || 'klog-ai <noreply@atlas-di.app>';
+const SMTP_FROM = process.env.SMTP_FROM || 'nois <noreply@atlas-di.app>';
 
 const VERIFICATION_EXPIRY_MINUTES = 15;
 const DEFAULT_CREDITS = 5;
@@ -59,7 +59,7 @@ app.use(express.static(PUBLIC_DIR, { maxAge: '1h', etag: true }));
 const rateLimitMap = new Map();
 const WINDOW = 60_000;
 const MAX_REQ = 10;
-const MAX_VERIFY_REQ = 3; // Stricter limit for verification requests
+const MAX_VERIFY_REQ = 3;
 
 function rateLimit(maxReq = MAX_REQ) {
     return (req, res, next) => {
@@ -101,7 +101,6 @@ setInterval(() => {
 const db = new Database(DB_PATH);
 db.pragma('journal_mode = WAL');
 
-// Existing leads table
 db.exec(`
   CREATE TABLE IF NOT EXISTS leads (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -113,7 +112,6 @@ db.exec(`
   )
 `);
 
-// Users table (verified emails)
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -123,7 +121,6 @@ db.exec(`
   )
 `);
 
-// Access tokens
 db.exec(`
   CREATE TABLE IF NOT EXISTS tokens (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -135,7 +132,6 @@ db.exec(`
   )
 `);
 
-// Email verification codes
 db.exec(`
   CREATE TABLE IF NOT EXISTS email_verifications (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -150,7 +146,6 @@ db.exec(`
 /* =====================
    PREPARED STATEMENTS
 ===================== */
-// Leads
 const insertLead = db.prepare(`
   INSERT INTO leads (email, source, user_agent, ip, created_at)
   VALUES (?, ?, ?, ?, ?)
@@ -163,21 +158,18 @@ const getRecentLeads = db.prepare(`
   LIMIT 200
 `);
 
-// Users
 const findUserByEmail = db.prepare(`SELECT id, email FROM users WHERE email = ?`);
 const insertUser = db.prepare(`
   INSERT INTO users (email, verified_at, created_at)
   VALUES (?, ?, ?)
 `);
 
-// Tokens
 const findTokenByUserId = db.prepare(`SELECT token, credits_remaining FROM tokens WHERE user_id = ?`);
 const insertToken = db.prepare(`
   INSERT INTO tokens (user_id, token, credits_remaining, created_at)
   VALUES (?, ?, ?, ?)
 `);
 
-// Email verifications
 const insertVerification = db.prepare(`
   INSERT INTO email_verifications (email, code, expires_at, created_at)
   VALUES (?, ?, ?, ?)
@@ -212,7 +204,7 @@ function generateSecureCode() {
 }
 
 function generateAccessToken() {
-    return 'klog_' + crypto.randomBytes(24).toString('hex');
+    return 'nois_' + crypto.randomBytes(24).toString('hex');
 }
 
 /* =====================
@@ -264,7 +256,6 @@ async function sendEmail(to, subject, text, html) {
             return false;
         }
     } else {
-        // Log to console for development
         console.log('');
         console.log('='.repeat(60));
         console.log('[EMAIL - NOT SENT (SMTP not configured)]');
@@ -281,9 +272,9 @@ async function sendEmail(to, subject, text, html) {
 async function sendVerificationEmail(email, code) {
     const verifyUrl = `${BASE_URL}/api/verify-email?code=${code}`;
 
-    const subject = 'Verify your email for klog-ai';
+    const subject = 'Verify your email for nois';
     const text = `
-Verify your email to get your klog-ai access token.
+Verify your email to get your nois access token.
 
 Click this link to verify:
 ${verifyUrl}
@@ -292,7 +283,7 @@ This link expires in ${VERIFICATION_EXPIRY_MINUTES} minutes.
 
 If you did not request this, you can ignore this email.
 
-- klog-ai team
+- nois
 `.trim();
 
     const html = `
@@ -301,14 +292,14 @@ If you did not request this, you can ignore this email.
 <head><meta charset="utf-8"></head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333; max-width: 500px; margin: 0 auto; padding: 20px;">
   <h2 style="margin-bottom: 20px;">Verify your email</h2>
-  <p>Click the button below to verify your email and receive your klog-ai access token.</p>
+  <p>Click the button below to verify your email and receive your nois access token.</p>
   <p style="margin: 30px 0;">
     <a href="${verifyUrl}" style="background: #111; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Verify Email</a>
   </p>
   <p style="color: #666; font-size: 14px;">This link expires in ${VERIFICATION_EXPIRY_MINUTES} minutes.</p>
   <p style="color: #666; font-size: 14px;">If you did not request this, you can ignore this email.</p>
   <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-  <p style="color: #999; font-size: 12px;">klog-ai - Kubernetes Log Quality Analyzer</p>
+  <p style="color: #999; font-size: 12px;">nois - Find the noise in your logs</p>
 </body>
 </html>
 `.trim();
@@ -317,25 +308,25 @@ If you did not request this, you can ignore this email.
 }
 
 async function sendTokenEmail(email, token) {
-    const subject = 'Your klog-ai access token';
+    const subject = 'Your nois access token';
     const text = `
-Your email has been verified. Here is your klog-ai access token:
+Your email has been verified. Here is your nois access token:
 
 ${token}
 
 Getting started:
-1. Install klog-ai: curl -fsSL https://klog.atlas-di.app/install.sh | sh
-2. Save your token: echo "${token}" > ~/.klogai/token
-3. Run: klog-ai quickstart
+1. Install nois: curl -fsSL https://nois.atlas-di.app/install.sh | sh
+2. Save your token: mkdir -p ~/.nois && echo "${token}" > ~/.nois/token
+3. Run: nois quickstart
 
 You have ${DEFAULT_CREDITS} free runs included.
 
-When you run out of credits, visit https://klog.atlas-di.app to purchase more.
+When you run out of credits, visit https://nois.atlas-di.app to purchase more.
 Your token will be reused - no need to get a new one.
 
 Keep this token safe. Do not share it publicly.
 
-- klog-ai team
+- nois
 `.trim();
 
     const html = `
@@ -343,22 +334,22 @@ Keep this token safe. Do not share it publicly.
 <html>
 <head><meta charset="utf-8"></head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333; max-width: 500px; margin: 0 auto; padding: 20px;">
-  <h2 style="margin-bottom: 20px;">Your klog-ai access token</h2>
+  <h2 style="margin-bottom: 20px;">Your nois access token</h2>
   <p>Your email has been verified. Here is your access token:</p>
   <div style="background: #f5f5f5; padding: 16px; border-radius: 4px; font-family: monospace; font-size: 14px; margin: 20px 0; word-break: break-all;">
     ${token}
   </div>
   <h3 style="margin-top: 30px;">Getting started</h3>
   <ol style="line-height: 1.8;">
-    <li>Install klog-ai:<br><code style="background: #f5f5f5; padding: 2px 6px; border-radius: 2px;">curl -fsSL https://klog.atlas-di.app/install.sh | sh</code></li>
-    <li>Save your token:<br><code style="background: #f5f5f5; padding: 2px 6px; border-radius: 2px;">mkdir -p ~/.klogai && echo "${token}" > ~/.klogai/token</code></li>
-    <li>Run:<br><code style="background: #f5f5f5; padding: 2px 6px; border-radius: 2px;">klog-ai quickstart</code></li>
+    <li>Install nois:<br><code style="background: #f5f5f5; padding: 2px 6px; border-radius: 2px;">curl -fsSL https://nois.atlas-di.app/install.sh | sh</code></li>
+    <li>Save your token:<br><code style="background: #f5f5f5; padding: 2px 6px; border-radius: 2px;">mkdir -p ~/.nois && echo "${token}" > ~/.nois/token</code></li>
+    <li>Run:<br><code style="background: #f5f5f5; padding: 2px 6px; border-radius: 2px;">nois quickstart</code></li>
   </ol>
   <p style="margin-top: 20px;"><strong>You have ${DEFAULT_CREDITS} free runs included.</strong></p>
-  <p style="color: #666;">When you run out of credits, visit <a href="https://klog.atlas-di.app">klog.atlas-di.app</a> to purchase more. Your token will be reused.</p>
+  <p style="color: #666;">When you run out of credits, visit <a href="https://nois.atlas-di.app">nois.atlas-di.app</a> to purchase more. Your token will be reused.</p>
   <p style="color: #c00; font-size: 14px; margin-top: 20px;">Keep this token safe. Do not share it publicly.</p>
   <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-  <p style="color: #999; font-size: 12px;">klog-ai - Kubernetes Log Quality Analyzer</p>
+  <p style="color: #999; font-size: 12px;">nois - Find the noise in your logs</p>
 </body>
 </html>
 `.trim();
@@ -373,7 +364,6 @@ app.get('/api/health', (_req, res) => {
     res.json({ ok: true });
 });
 
-// Lead capture (existing)
 app.post('/api/lead', rateLimit(), (req, res) => {
     try {
         const { email, source, ua } = req.body;
@@ -402,7 +392,6 @@ app.post('/api/lead', rateLimit(), (req, res) => {
     }
 });
 
-// Request email verification
 app.post('/api/request-verification', rateLimit(MAX_VERIFY_REQ), async (req, res) => {
     try {
         const { email } = req.body;
@@ -414,27 +403,21 @@ app.post('/api/request-verification', rateLimit(MAX_VERIFY_REQ), async (req, res
         const normalized = email.toLowerCase().trim();
         const now = new Date();
 
-        // Rate limit: max 3 verification requests per email per hour
         const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
         const recentCount = countRecentVerifications.get(normalized, oneHourAgo);
         if (recentCount && recentCount.count >= 3) {
-            // Do not reveal this is rate limiting to prevent enumeration
             return res.json({ ok: true, message: 'If this email is valid, you will receive a verification link.' });
         }
 
-        // Generate verification code
         const code = generateSecureCode();
         const expiresAt = new Date(now.getTime() + VERIFICATION_EXPIRY_MINUTES * 60 * 1000).toISOString();
 
-        // Store verification
         insertVerification.run(normalized, code, expiresAt, now.toISOString());
 
-        // Send email (async, do not wait)
         sendVerificationEmail(normalized, code).catch(err => {
             console.error('[verification] email send failed:', err.message);
         });
 
-        // Always return same response (prevent email enumeration)
         res.json({ ok: true, message: 'If this email is valid, you will receive a verification link.' });
     } catch (e) {
         console.error('[verification] error:', e.message);
@@ -442,7 +425,6 @@ app.post('/api/request-verification', rateLimit(MAX_VERIFY_REQ), async (req, res
     }
 });
 
-// Verify email and issue token
 app.get('/api/verify-email', async (req, res) => {
     try {
         const { code } = req.query;
@@ -466,19 +448,16 @@ app.get('/api/verify-email', async (req, res) => {
             return res.status(400).send(verificationErrorPage('This verification link has expired. Please request a new one.'));
         }
 
-        // Mark verification as used
         markVerificationUsed.run(now.toISOString(), verification.id);
 
         const email = verification.email;
 
-        // Find or create user
         let user = findUserByEmail.get(email);
         if (!user) {
             const result = insertUser.run(email, now.toISOString(), now.toISOString());
             user = { id: result.lastInsertRowid, email };
         }
 
-        // Find or create token
         let tokenRecord = findTokenByUserId.get(user.id);
         let accessToken;
 
@@ -489,12 +468,10 @@ app.get('/api/verify-email', async (req, res) => {
             insertToken.run(user.id, accessToken, DEFAULT_CREDITS, now.toISOString());
         }
 
-        // Send token email (async)
         sendTokenEmail(email, accessToken).catch(err => {
             console.error('[token] email send failed:', err.message);
         });
 
-        // Return success page
         res.send(verificationSuccessPage());
     } catch (e) {
         console.error('[verify-email] error:', e.message);
@@ -502,7 +479,6 @@ app.get('/api/verify-email', async (req, res) => {
     }
 });
 
-// Admin endpoint (existing)
 app.get('/api/admin/leads', (req, res) => {
     if (!ADMIN_KEY) return res.status(403).json({ ok: false });
     if (req.query.key !== ADMIN_KEY) return res.status(401).json({ ok: false });
@@ -520,7 +496,7 @@ function verificationSuccessPage() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verified - klog-ai</title>
+    <title>Email Verified - nois</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -564,7 +540,7 @@ function verificationSuccessPage() {
         <h1>Email verified</h1>
         <p class="highlight">Check your inbox for your access token.</p>
         <p>Your token includes ${DEFAULT_CREDITS} free runs. Follow the instructions in the email to get started.</p>
-        <p><a href="/">Return to klog-ai</a></p>
+        <p><a href="/">Return to nois</a></p>
     </div>
 </body>
 </html>
@@ -578,7 +554,7 @@ function verificationErrorPage(message) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification Failed - klog-ai</title>
+    <title>Verification Failed - nois</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -618,7 +594,7 @@ function verificationErrorPage(message) {
     <div class="container">
         <h1>Verification failed</h1>
         <p>${message}</p>
-        <p><a href="/">Return to klog-ai</a></p>
+        <p><a href="/">Return to nois</a></p>
     </div>
 </body>
 </html>
@@ -637,6 +613,6 @@ app.get('*', (_req, res) => {
 ===================== */
 initEmailTransport().then(() => {
     app.listen(PORT, '0.0.0.0', () => {
-        console.log(`[klog-landing] running on :${PORT}`);
+        console.log(`[nois] running on :${PORT}`);
     });
 });

@@ -1,9 +1,9 @@
 version: "3.9"
 
 services:
-  klog-landing:
-    image: logki-klog-landing
-    container_name: klog-landing
+  nois-landing:
+    image: nois-landing
+    container_name: nois-landing
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/ >/dev/null 2>&1 || exit 1"]
@@ -15,31 +15,28 @@ services:
       - PORT=8080
       - DB_PATH=/data/leads.db
       - ADMIN_KEY=${ADMIN_KEY}
-
       - BASE_URL=${BASE_URL}
-
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASS=${SMTP_PASS}
       - SMTP_FROM=${SMTP_FROM}
     volumes:
-      - klog_leads_data:/data
+      - nois_leads_data:/data
     networks:
       - traefik-net
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-net"
-      - "traefik.http.routers.klog.entrypoints=websecure"
-      - "traefik.http.routers.klog.rule=Host(`klog.atlas-di.app`)"
-      - "traefik.http.routers.klog.tls=true"
-      - "traefik.http.routers.klog.tls.certresolver=letsencrypt"
-      - "traefik.http.services.klog.loadbalancer.server.port=8080"
+      - "traefik.http.routers.nois.entrypoints=websecure"
+      - "traefik.http.routers.nois.rule=Host(`nois.atlas-di.app`)"
+      - "traefik.http.routers.nois.tls=true"
+      - "traefik.http.routers.nois.tls.certresolver=letsencrypt"
+      - "traefik.http.services.nois.loadbalancer.server.port=8080"
 
 volumes:
-  klog_leads_data:
+  nois_leads_data:
 
 networks:
   traefik-net:
     external: true
-

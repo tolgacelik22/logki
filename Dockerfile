@@ -1,8 +1,8 @@
-# klog-ai Landing Server
+# nois Landing Server
 # Production container with lead capture API + SQLite
 #
-# Build: docker build -t klog-landing .
-# Run:   docker run -p 8080:8080 -v klog_data:/data klog-landing
+# Build: docker build -t nois-landing .
+# Run:   docker run -p 8080:8080 -v nois_data:/data nois-landing
 
 FROM node:20-alpine AS builder
 
