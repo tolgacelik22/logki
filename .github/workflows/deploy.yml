@@ -4,7 +4,7 @@ on:
     branches: [main]
 jobs:
   build-deploy:
-    uses: tolgacelik22/infra/.github/workflows/build-image.yml@main
+    uses: tolgacelik22/gh-workflows/.github/workflows/build-image.yml@main
     with:
       app: klog
     secrets:
