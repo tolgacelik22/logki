@@ -1,11 +1,11 @@
 name: deploy
 on:
   push:
-    branches: [main]
+    branches: [rename/nois]
 jobs:
   build-deploy:
     uses: tolgacelik22/gh-workflows/.github/workflows/build-image.yml@main
     with:
-      app: klog
+      app: nois
     secrets:
       INFRA_DEPLOY_KEY: ${{ secrets.INFRA_DEPLOY_KEY }}
